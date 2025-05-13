@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>B320控制台</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-size: cover;
+            background-position: center;
+            font-family: 'Microsoft Yahei', sans-serif;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            height: 95vh;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 2);
+            backdrop-filter: blur(5px);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 左侧列调整 */
+        .notice {
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        /* 中间列样式 */
+        .media-box {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .weather-frame {
+            width: 100%;
+            height: calc(100% - 30px);
+            border: none;
+            border-radius: 10px;
+        }
+
+        /* 右侧列调整 */
+        .table-container {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        table {
+            width: 100%;
+            height: 50%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .refresh-btn {
+            padding: 8px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .cleaner {
+            width: 100%;
+            text-align: center; 
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #0000002a;
+            color: rgb(255, 238, 0);
+        }
+
+        .cleaner2 {
+            width: 100%;
+            text-align: center; 
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #0000002a;
+            color: rgb(255, 238, 0);
+        }
+
+        .day {
+            font-size: 20px;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .homework {
+            font-size: 20px;
+            font-style: normal;
+            font-weight: normal;
+        }
+    </style>
+    <script src="js/sober.js"></script>
+    <script src="js/js.js"></script>
+    <script src="js/fetchHomework.js"></script>
+    <script src="js/fetchCleaner.js"></script>
+    <script src="js/fetchCleaner2.js"></script>
+    <script src="changeback.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧列 -->
+        <div class="column">
+            <div class="box" style="background-color: #2b2a2a;">
+                <h3 id="pDate" style="color: azure; text-align: left; font-style: italic;">当前日期（YYYY/MM/DD）</h3>
+                <object data="time.html" width=100% height=30%></object>
+            </div>
+            <div class="box notice" style="background-image: url('Homeworkback.jpg'); background-size: cover; background-position: center;">
+                <h2>作业</h2>
+                <span class="homework" id="homework-content">正在从服务器获取中……</span>
+            </div>
+        </div>
+
+        <!-- 中间列 -->
+        <div class="column">
+            <div class="box" style="background-image: url('Xmengback.png'); background-size: cover; background-position: center;">
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                </br>
+                <s-dialog size="full">
+                    <s-button slot="trigger"> 点我与小萌对话 </s-button>
+                    <div slot="headline"> XmengAI </div>
+                    <object data="http://localhost:3000/" width=100% height=100%></object>
+                    <s-button slot="action" type="text">点我退出</s-button>
+                </s-dialog>
+            </div>
+            <div class="box" id="ww_88a7d7e3d9a13" v='1.3' loc='id' a='{"t":"horizontal","lang":"zh","sl_lpl":1,"ids":["wl11437"],"font":"Times","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"image","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#81D4FA","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'><a href="https://weatherwidget.org/" id="ww_88a7d7e3d9a13_u" target="_blank">Html weather widget</a></div><script async src="https://app3.weatherwidget.org/js/?id=ww_88a7d7e3d9a13"></script>
+            <div class="box" style="background-image: url('back.png'); background-size: cover; background-position: center;">
+                <div id="daily-quote">请点击按钮获取一言</div>
+                </br>
+                <button class="refresh-btn" onclick="refreshQuote()">获取一言</button>
+            </div>
+        </div>
+
+        <!-- 右侧列 -->
+        <div class="column">
+            <div class="box" style="background-color: #e0baba4c;">
+                <div class="table-container">
+                    <h2 style="color: #ffffff; text-align: center; ">单周值日表</h2>
+                    <!-- 值日小畜生doge -->
+                    <table class="cleaner">
+                        <tr>
+                            <td class="day">周一</td>
+                            <td class="day">周二</td>
+                            <td class="day">周三</td>
+                            <td class="day">周四</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                    </table>
+                    <h2 style="color: #ffffff; text-align: center; ">双周值日表</h2>
+                    <table class="cleaner2">
+                        <tr>
+                            <td class="day">周一</td>
+                            <td class="day">周二</td>
+                            <td class="day">周三</td>
+                            <td class="day">周四</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/getdate.js"></script>
+</body>
+</html>
+<!-- 
+////////////////////////////////////////////////////////////////////
+//                          _ooOoo_                               //
+//                         o8888888o                              //
+//                         88" . "88                              //
+//                         (| ^_^ |)                              //
+//                         O\  =  /O                              //
+//                      ____/`---'\____                           //
+//                    .'  \\|     |//  `.                         //
+//                   /  \\|||  :  |||//  \                        //
+//                  /  _||||| -:- |||||-  \                       //
+//                  |   | \\\  -  /// |   |                       //
+//                  | \_|  ''\---/''  |   |                       //
+//                  \  .-\__  `-`  ___/-. /                       //
+//                ___`. .'  /--.--\  `. . ___                     //
+//              ."" '<  `.___\_<|>_/___.'  >'"".                  //
+//            | | :  `- \`.;`\ _ /`;.`/ - ` : | |                 //
+//            \  \ `-.   \_ __\ /__ _/   .-` /  /                 //
+//      ========`-.____`-.___\_____/___.-`____.-'========         //
+//                           `=---='                              //
+//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        //
+//         佛祖保佑       永无BUG     永不报错                      //
+////////////////////////////////////////////////////////////////////
+-->
