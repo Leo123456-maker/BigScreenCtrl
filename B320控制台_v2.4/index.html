@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>B320控制台</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-size: cover;
+            background-position: center;
+            font-family: 'Microsoft Yahei', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: var(--text-color); /* Use the text color variable */
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            height: 100%;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc((100% - 40px) / 3); 
+        }
+
+        .box_xm {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc((100% - 40px) / 3); 
+        }
+
+        /* Define the colors */
+        :root {
+            --color1: #FF5733; /* Example color 1 */
+            --color2: #33FF57; /* Example color 2 */
+            --color3: #3357FF; /* Example color 3 */
+            --text-color: #ffffff; /* Default text color */
+        }
+
+        /* 左侧列调整 */
+        .notice {
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        /* 中间列样式 */
+        .media-box {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .weather-frame {
+            width: 100%;
+            height: calc(100% - 30px);
+            border: none;
+            border-radius: 10px;
+        }
+
+        /* 右侧列调整 */
+        .table-container {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        table {
+            width: 100%;
+            height: 50%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .refresh-btn {
+            padding: 8px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .cleaner {
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #0000002a;
+            color: rgb(255, 255, 255);
+        }
+
+        .cleaner2 {
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #0000002a;
+            color: rgb(255, 255, 255);
+        }
+
+        .day {
+            font-size: 20px;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .homework {
+            font-size: 20px;
+            font-style: normal;
+            font-weight: normal;
+        }
+
+        .announcement {
+            font-size: 20px;
+            font-style: normal;
+            font-weight: normal;
+        }
+
+        #wave-ball {
+            display: block;
+            
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        #wave-ball-btn {
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        #xm-btn {
+            /* 定位到 wave-ball 右侧 */
+            position: absolute;
+            left: 220px; /* 根据 wave-ball 的宽度 200px 加一些间距 */
+            top: 20px; /* 适当调整顶部间距 */
+            padding: 8px 20px;
+            background: #007BFF; /* 按钮背景色 */
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #more-features-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #time {
+            font-weight: bold; /* 加粗 */
+            font-size: 48px; /* 加大字号 */
+            color: var(--text-color); /* Use the text color variable */
+        }
+    </style>
+    <script src="js/sober.js"></script>
+    <script src="js/js.js"></script>
+    <script src="js/fetchHomework.js"></script>
+    <script src="js/fetchCleaner.js"></script>
+    <script src="js/fetchCleaner2.js"></script>
+    <script src="js/fetchannouncement.js"></script>
+    <script src="changeback.js"></script>
+    <script src="js/getweek.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 左侧列 -->
+        <div class="column" style="display: flex; flex-direction: column; height: 100%; gap: 20px;">
+            <div class="box" style="background-color: #adadad65; display: flex; justify-content: center; align-items: center; flex: 1;">
+                <div class="clock_box">
+                    <div class="clock">
+                        <!-- <p id="pDate" style="position: center;"></p> -->
+                        <p id="time"></br></br></br></p>
+                    </div>
+                </div>
+                <div id="ww_06467dc3ada8a" v='1.3' loc='auto' a='{"t":"horizontal","lang":"zh","sl_lpl":1,"ids":[],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"#FFFFFF00","cl_font":"rgba(255,255,255,1)","cl_cloud":"#d4d4d4","cl_persp":"#2196F3","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722","el_whr":3}'>
+                    <a href="https://weatherwidget.org/zh/" id="ww_06467dc3ada8a_u" target="_blank">天气插件</a>
+                </div>
+                <script async src="https://app3.weatherwidget.org/js/?id=ww_06467dc3ada8a"></script>
+
+                </br>
+                </br>
+                <div>
+                    <div id="daily-quote">获取每日一言</div>
+                    <!-- <br/> -->
+                    <button class="refresh-btn" onclick="refreshQuote()">获取一言</button>
+                </div>
+            </div>
+
+            
+            <div class="box notice" style="background-color: #adadad65; background-size: cover; background-position: center; display: flex; flex: 5;">
+                <h2>作业</h2>
+                    
+                <s-scroll-view style="height: 320px; background: var(--s-color-surface-container-low)"> 
+                    <span class="homework" id="homework-content">正在从服务器获取中……</span>
+                </s-scroll-view>
+            </div>
+            <div style="display: flex; flex: 3;"></br></div>
+        </div>
+
+        <!-- 中间列 -->
+        <div class="column">
+                <div  class="box_xm" style="background-color: #ffffff00; background-size: cover; background-position: center; display: flex; flex:11;">
+                    <canvas id="wave-ball" width="220" height="220"></canvas>
+                    <s-dialog size="full">
+                        <!-- <button class="xm-btn" slot="trigger">与小萌AI对话</button> -->
+                        <s-button slot="trigger" style="color: #ffffff; position: center "> 与小萌AI对话 </s-button>
+                        <!-- <iframe src="http://47.121.193.41:18480/"allow="camera *; microphone *"" width=100% height=100%> -->
+                        <!-- <object data="http://47.121.193.41:18480/" width=100% height=100%></object> -->
+                        <iframe src="http://47.121.193.41:18480/" width="100%" height="100%" allow="camera *; microphone *""></iframe>
+                        <button slot="action" type="text">点我退出</button>
+                    </s-dialog>
+                </div>
+                <div style="display: flex; flex: 2;"></div>
+        </div>
+
+        <!-- 右侧列 -->
+        <div class="column">
+            <div class="box notice" style="background-color: #adadad65; flex: 2; display: flex; flex-direction: column; gap: 3px; padding: 3px;">
+                <h2>公告&答疑名单</h2>
+                <s-scroll-view style="height: 320px; background: var(--s-color-surface-container-low)"> 
+                    <span class="announcement" id="get-announcement">获取公告中...</span>
+                </s-scroll-view>
+            </div>
+            <div class="box" style="background-color: #adadad65; flex:3;">
+                <div class="table-container">
+                    <h2 id="week" style="color: #ffffff; text-align: center; ">获取周数中……</h2>
+                    <!-- <h3 style="color: #ffffff; text-align: center; ">单周值日表</h3> -->
+                    <table class="cleaner">
+                        <tr>
+                            <td class="day">周一</td>
+                            <td class="day">周二</td>
+                            <td class="day">周三</td>
+                            <td class="day">周四</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                    </table>
+                    <!-- <h3 style="color: #ffffff; text-align: center; ">双周值日表</h3> -->
+                    <table class="cleaner2">
+                        <tr>
+                            <td class="day">周一</td>
+                            <td class="day">周二</td>
+                            <td class="day">周三</td>
+                            <td class="day">周四</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                        <tr>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                            <td>值日生</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="display: flex; flex: 1;"></div>
+        </div>
+    </div>
+    <!-- <script src="js/getdate.js"></script> -->
+    <script>
+        function openDocument(url) {
+            window.location.href = url;
+        }
+
+        // 获取页面id=time的元素（P元素<p id="time">12:12:12 AM</p>）
+        var time = document.querySelector("#time");
+        // 定义函数传入time元素
+        function up(time_el) {
+            // 获取当前时间
+            let date = new Date();
+            // 获取时分秒
+            let h = date.getHours();
+            let m = date.getMinutes();
+            let s = date.getSeconds();
+            
+            if(date.getHours() == 14 & date.getMinutes() >= 45) {
+                m = m - 20;
+            } else if (date.getHours() == 15 & 0 <= date.getMinutes() <= 10) {
+                h = h - 1;
+                m = date.getMinutes() + 45;
+            } else {
+                h = date.getHours();
+                m = date.getMinutes();
+                s = date.getSeconds();
+            }
+            
+            // 如果时间小于10则前面补充0
+            if (h < 10) { h = "0" + h; }
+            if (m < 10) { m = "0" + m; }
+            if (s < 10) { s = "0" + s; }
+
+            // 拼接时间并且赋值给time元素的文本中，从而显示
+            time_el.textContent = h + ":" + m + ":" + s;
+
+        }
+
+        // 定时器，每秒执行一次实现更新
+        setInterval(() => {
+            up(time);
+        }, 1000);
+
+
+        // 获取canvas元素和绘图上下文
+        const canvas = document.getElementById('wave-ball');
+        const ctx = canvas.getContext('2d');
+
+        // 设置canvas的宽度和高度
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // 定义波浪的参数
+        const waves = [
+            { amplitude: 10, frequency: 0.02, speed: 0.01, phase: 0, color: 'rgba(0, 150, 255, 0.8)' },
+            { amplitude: 15, frequency: 0.03, speed: 0.02, phase: Math.PI / 2, color: 'rgba(0, 100, 200, 0.6)' },
+            { amplitude: 20, frequency: 0.04, speed: 0.03, phase: Math.PI, color: 'rgba(0, 50, 150, 0.4)' }
+        ];
+
+        function drawWave(x, y, wave) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            for (let i = 0; i < width; i++) {
+                const dx = i - width / 2;
+                const dy = wave.amplitude * Math.sin(wave.frequency * dx + wave.phase);
+                ctx.lineTo(x + i, y + dy);
+            }
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.fillStyle = wave.color;
+            ctx.fill();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制蓝色背景
+            ctx.fillStyle = 'rgba(0, 120, 200, 0.5)';
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, height / 2, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // 绘制波浪
+            waves.forEach(wave => {
+                drawWave(0, height / 2, wave);
+                wave.phase += wave.speed;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>
