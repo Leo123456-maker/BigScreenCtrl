@@ -1,0 +1,93 @@
+:root {
+    --color2: #ffffff;
+    --color4: #ffffff;
+    --color6: #ffffff;
+    --text-color: #ffffff; /* Default text color */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Montserrat', sans-serif, Arial, 'Microsoft Yahei';
+    color: var(--text-color); /* Use the text color variable */
+}
+
+.clock p {
+    font-size: 50px;
+    font-weight: bold;
+    color: transparent;
+    letter-spacing: 2px;
+    background-image: linear-gradient(135deg, var(--color2), var(--color4), var(--color6));
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+.weather-frame {
+    width: 100%;
+    height: calc(100% - 30px);
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color); /* Use the text color variable */
+}
+
+.clock_box {
+    position: relative;
+    width: 380px;
+    height: 80px;
+    border-radius: 10px;
+    background-image: linear-gradient(135deg, var(--color2), var(--color4), var(--color6));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: animate 4s linear infinite;
+}
+
+.clock_box::after, .clock_box::before {
+    position: absolute;
+    content: "";
+    background-image: inherit;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-radius: 10px;
+    filter: blur(15px);
+}
+
+.clock_box::before {
+    filter: blur(100px);
+}
+
+.clock {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    bottom: 10px;
+    background-color: #2b2a2a;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes animate {
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}

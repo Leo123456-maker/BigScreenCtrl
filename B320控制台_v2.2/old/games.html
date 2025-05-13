@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国象棋</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            width: 50px;
+            height: 50px;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        td:nth-child(odd):nth-of-type(2n + 1),
+        td:nth-child(even):nth-of-type(2n) {
+            background-color: #d2b48c;
+        }
+
+        .selected {
+            background-color: yellow;
+        }
+
+        .red-piece {
+            color: red;
+        }
+
+        .black-piece {
+            color: black;
+        }
+
+        .return-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <a href="../functions.html" class="return-button">Return</a>
+    <table id="chessboard"></table>
+
+    <script>
+        const rows = 10;
+        const cols = 9;
+        const chessboard = document.getElementById('chessboard');
+        let currentPlayer = 'red'; // 初始玩家为红方
+
+        const pieces = [
+            ['車', '馬', '相', '仕', '帥', '仕', '相', '馬', '車'],
+            ['', '', '', '', '', '', '', '', ''],
+            ['', '炮', '', '', '', '', '', '炮', ''],
+            ['兵', '', '兵', '', '兵', '', '兵', '', '兵'],
+            ['', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', ''],
+            ['卒', '', '卒', '', '卒', '', '卒', '', '卒'],
+            ['', '砲', '', '', '', '', '', '砲', ''],
+            ['', '', '', '', '', '', '', '', ''],
+            ['车', '马', '象', '士', '將', '士', '象', '马', '车']
+        ];
+
+        // 绘制棋盘
+        for (let i = 0; i < rows; i++) {
+            const row = document.createElement('tr');
+            for (let j = 0; j < cols; j++) {
+                const cell = document.createElement('td');
+                cell.textContent = pieces[i][j];
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                if (pieces[i][j]) {
+                    const pieceColorClass = isRedPiece(pieces[i][j]) ? 'red-piece' : 'black-piece';
+                    cell.classList.add(pieceColorClass);
+                }
+                cell.addEventListener('click', handleCellClick);
+                row.appendChild(cell);
+            }
+            chessboard.appendChild(row);
+        }
+
+        let selectedPiece = null;
+
+        // 处理单元格点击事件
+        function handleCellClick() {
+            const row = parseInt(this.dataset.row);
+            const col = parseInt(this.dataset.col);
+
+            if (selectedPiece) {
+                const fromRow = parseInt(selectedPiece.dataset.row);
+                const fromCol = parseInt(selectedPiece.dataset.col);
+                const piece = selectedPiece.textContent;
+
+                if (isValidMove(piece, fromRow, fromCol, row, col)) {
+                    // 移动棋子
+                    selectedPiece.textContent = '';
+                    selectedPiece.classList.remove('red-piece', 'black-piece');
+                    pieces[fromRow][fromCol] = '';
+                    this.textContent = piece;
+                    const pieceColorClass = isRedPiece(piece) ? 'red-piece' : 'black-piece';
+                    this.classList.add(pieceColorClass);
+                    pieces[row][col] = piece;
+                    selectedPiece.classList.remove('selected');
+                    selectedPiece = null;
+                    currentPlayer = currentPlayer === 'red' ? 'black' : 'red'; // 切换玩家
+
+                    // 检查是否将军或将死
+                    const enemyKing = isRedPiece(piece) ? '將' : '帥';
+                    const enemyKingPos = findPiecePosition(enemyKing);
+                    if (isCheck(enemyKingPos[0], enemyKingPos[1], currentPlayer)) {
+                        alert('将军！');
+                        if (isCheckmate(enemyKingPos[0], enemyKingPos[1], currentPlayer)) {
+                            alert('将死！游戏结束！');
+                        }
+                    }
+                } else {
+                    alert('此移动不符合规则！');
+                    selectedPiece.classList.remove('selected');
+                    selectedPiece = null;
+                }
+            } else {
+                if (this.textContent) {
+                    const pieceColor = isRedPiece(this.textContent) ? 'red' : 'black';
+                    if (pieceColor === currentPlayer) {
+                        selectedPiece = this;
+                        this.classList.add('selected');
+                    } else {
+                        alert('当前轮到 ' + currentPlayer + ' 方行动！');
+                    }
+                }
+            }
+        }
+
+        // 判断棋子是否为红方
+        function isRedPiece(piece) {
+            return ['帥', '仕', '相', '車', '馬', '炮', '兵'].includes(piece);
+        }
+
+        // 判断移动是否合法
+        function isValidMove(piece, fromRow, fromCol, toRow, toCol) {
+            // 检查目标位置是否越界
+            if (toRow < 0 || toRow >= rows || toCol < 0 || toCol >= cols) {
+                return false;
+            }
+            // 不能移动到自己的棋子上
+            const targetPiece = pieces[toRow][toCol];
+            if (targetPiece && isRedPiece(piece) === isRedPiece(targetPiece)) {
+                return false;
+            }
+            // 防止棋子不移动
+            if (fromRow === toRow && fromCol === toCol) {
+                return false;
+            }
+            switch (piece) {
+                case '車':
+                case '车':
+                    return isValidRookMove(fromRow, fromCol, toRow, toCol);
+                case '馬':
+                case '马':
+                    return isValidKnightMove(fromRow, fromCol, toRow, toCol);
+                case '相':
+                case '象':
+                    return isValidBishopMove(piece, fromRow, fromCol, toRow, toCol);
+                case '仕':
+                case '士':
+                    return isValidAdvisorMove(piece, fromRow, fromCol, toRow, toCol);
+                case '帥':
+                case '將':
+                    return isValidKingMove(piece, fromRow, fromCol, toRow, toCol);
+                case '炮':
+                case '砲':
+                    return isValidCannonMove(fromRow, fromCol, toRow, toCol);
+                case '兵':
+                case '卒':
+                    return isValidPawnMove(piece, fromRow, fromCol, toRow, toCol);
+                default:
+                    return false;
+            }
+        }
+
+        // 车的移动规则
+        function isValidRookMove(fromRow, fromCol, toRow, toCol) {
+            if (fromRow === toRow) {
+                const step = fromCol < toCol ? 1 : -1;
+                for (let col = fromCol + step; col !== toCol; col += step) {
+                    if (pieces[fromRow][col]) {
+                        return false;
+                    }
+                }
+                return true;
+            } else if (fromCol === toCol) {
+                const step = fromRow < toRow ? 1 : -1;
+                for (let row = fromRow + step; row !== toRow; row += step) {
+                    if (pieces[row][fromCol]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // 马的移动规则
+        function isValidKnightMove(fromRow, fromCol, toRow, toCol) {
+            const dr = Math.abs(toRow - fromRow);
+            const dc = Math.abs(toCol - fromCol);
+            if ((dr === 2 && dc === 1) || (dr === 1 && dc === 2)) {
+                if (dr === 2) {
+                    const step = fromRow < toRow ? 1 : -1;
+                    const blockRow = fromRow + step;
+                    if (blockRow >= 0 && blockRow < rows && pieces[blockRow][fromCol]) {
+                        return false;
+                    }
+                } else {
+                    const step = fromCol < toCol ? 1 : -1;
+                    const blockCol = fromCol + step;
+                    if (blockCol >= 0 && blockCol < cols && pieces[fromRow][blockCol]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // 相/象的移动规则
+        function isValidBishopMove(piece, fromRow, fromCol, toRow, toCol) {
+            const isRed = piece === '相';
+            const riverRow = isRed ? 4 : 5;
+            if ((isRed && toRow > riverRow) || (!isRed && toRow < riverRow)) {
+                return false;
+            }
+            const dr = toRow - fromRow;
+            const dc = toCol - fromCol;
+            if (Math.abs(dr) === 2 && Math.abs(dc) === 2) {
+                const r = fromRow + (dr / 2);
+                const c = fromCol + (dc / 2);
+                if (r >= 0 && r < rows && c >= 0 && c < cols && pieces[r][c]) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // 仕/士的移动规则
+        function isValidAdvisorMove(piece, fromRow, fromCol, toRow, toCol) {
+            const isRed = piece === '仕';
+            const palaceCols = [3, 4, 5];
+            const palaceRows = isRed ? [0, 1, 2] : [7, 8, 9];
+            if (!palaceCols.includes(toCol) || !palaceRows.includes(toRow)) {
+                return false;
+            }
+            const dr = Math.abs(toRow - fromRow);
+            const dc = Math.abs(toCol - fromCol);
+            return dr === 1 && dc === 1;
+        }
+
+        // 帅/将的移动规则
+        function isValidKingMove(piece, fromRow, fromCol, toRow, toCol) {
+            const isRed = piece === '帥';
+            const palaceCols = [3, 4, 5];
+            const palaceRows = isRed ? [0, 1, 2] : [7, 8, 9];
+            if (!palaceCols.includes(toCol) || !palaceRows.includes(toRow)) {
+                return false;
+            }
+            const dr = Math.abs(toRow - fromRow);
+            const dc = Math.abs(toCol - fromCol);
+            return (dr === 1 && dc === 0) || (dr === 0 && dc === 1);
+        }
+
+        // 炮的移动规则
+        function isValidCannonMove(fromRow, fromCol, toRow, toCol) {
+            if (fromRow === toRow) {
+                let count = 0;
+                const step = fromCol < toCol ? 1 : -1;
+                for (let col = fromCol + step; col !== toCol; col += step) {
+                    if (pieces[fromRow][col]) {
+                        count++;
+                    }
+                }
+                if (pieces[toRow][toCol]) {
+                    return count === 1;
+                } else {
+                    return count === 0;
+                }
+            } else if (fromCol === toCol) {
+                let count = 0;
+                const step = fromRow < toRow ? 1 : -1;
+                for (let row = fromRow + step; row !== toRow; row += step) {
+                    if (pieces[row][fromCol]) {
+                        count++;
+                    }
+                }
+                if (pieces[toRow][toCol]) {
+                    return count === 1;
+                } else {
+                    return count === 0;
+                }
+            }
+            return false;
+        }
+
+        // 兵/卒的移动规则
+        function isValidPawnMove(piece, fromRow, fromCol, toRow, toCol) {
+            const isRed = piece === '兵';
+            const riverRow = isRed ? 4 : 5;
+            if (isRed) {
+                if (fromRow <= riverRow) {
+                    return toRow === fromRow + 1 && toCol === fromCol;
+                } else {
+                    return (toRow === fromRow + 1 && toCol === fromCol) || (toRow === fromRow && Math.abs(toCol - fromCol) === 1);
+                }
+            } else {
+                if (fromRow >= riverRow) {
+                    return toRow === fromRow - 1 && toCol === fromCol;
+                } else {
+                    return (toRow === fromRow - 1 && toCol === fromCol) || (toRow === fromRow && Math.abs(toCol - fromCol) === 1);
+                }
+            }
+        }
+
+        // 查找棋子位置
+        function findPiecePosition(piece) {
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    if (pieces[i][j] === piece) {
+                        return [i, j];
+                    }
+                }
+            }
+            return null;
+        }
+
+        // 判断是否将军
+        function isCheck(kingRow, kingCol, attackingPlayer) {
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const piece = pieces[i][j];
+                    if (piece && isRedPiece(piece) !== (attackingPlayer === 'red')) {
+                        if (isValidMove(piece, i, j, kingRow, kingCol)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // 判断是否将死
+        function isCheckmate(kingRow, kingCol, attackingPlayer) {
+            const king = attackingPlayer === 'red' ? '帥' : '將';
+            const possibleMoves = [
+                [-1, 0], [1, 0], [0, -1], [0, 1]
+            ];
+            for (const [dr, dc] of possibleMoves) {
+                const newRow = kingRow + dr;
+                const newCol = kingCol + dc;
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                    const targetPiece = pieces[newRow][newCol];
+                    if (!targetPiece || isRedPiece(targetPiece) !== (attackingPlayer === 'red')) {
+                        // 临时移动帅/将
+                        pieces[kingRow][kingCol] = '';
+                        pieces[newRow][newCol] = king;
+                        if (!isCheck(newRow, newCol, attackingPlayer)) {
+                            // 恢复帅/将位置
+                            pieces[kingRow][kingCol] = king;
+                            pieces[newRow][newCol] = targetPiece;
+                            return false;
+                        }
+                        // 恢复帅/将位置
+                        pieces[kingRow][kingCol] = king;
+                        pieces[newRow][newCol] = targetPiece;
+                    }
+                }
+            }
+            return true;
+        }
+
+    </script>
+</body>
+</html>

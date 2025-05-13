@@ -1,0 +1,86 @@
+.calculator 
+{
+  width: 600px;
+  margin: auto;
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+ background-color: #e8c9c9;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#display 
+{
+  width: 96.5%;
+  height: 60px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 30px;
+  border: none;
+  border-radius: 20px;
+  background-color:#ffe5e5;
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.buttons 
+{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+button 
+{
+  width: 80px;
+  height: 80px;
+  font-size: 24px;
+  background-color:#e7dfdf;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button.clear-button
+{
+background-color:lightblue;
+}
+
+button.calculate-button
+{
+  background-color:lightblue;
+}
+button.delete-button
+{
+  background-color:#f46666;
+}
+
+button:hover 
+{
+  transform: scale(1.05);
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+button:active 
+{
+  transform: scale(0.95);
+  box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+button.operator 
+{
+  background-image: radial-gradient(circle at center, #ff8474, #e84a5f);
+  color: #fff;
+}
+
+button.operator:hover 
+{
+  background-image: radial-gradient(circle at center, #e84a5f, #ff8474);
+}
+
+button.operator:active 
+{
+  background-image: radial-gradient(circle at center, #ff3c3c, #d73737);
+}
